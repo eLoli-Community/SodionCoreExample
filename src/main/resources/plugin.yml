@@ -1,0 +1,7 @@
+name: SodionCoreExample
+version: ${version}
+main: com.eloli.sodioncoreexample.BukkitLoader
+authors:
+  - InkerBot
+description: Example plugin use SodionCore
+website: https://mohistmc.com/

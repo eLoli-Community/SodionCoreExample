@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'com.eloli.sodioncoreexample'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+}
+
+dependencies {
+    // Bukkit Api
+    compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
+
+    // What need download runtime
+    compileOnly project(path: ':Libs', configuration: 'shadow')
+
+    implementation 'com.github.eLoli-Community.SodionCore:SodionCore-Base:0d0463ec0d'
+    implementation 'com.github.eLoli-Community.SodionCore:SodionCore-DependManager:0d0463ec0d'
+    implementation 'com.github.eLoli-Community.SodionCore:SodionCore-Orm:0d0463ec0d'
+    compileOnly 'org.hibernate.orm:hibernate-core:6.0.0.Alpha7'
+}
+
+shadowJar{
+    relocate('org.apache.maven', 'com.eloli.sodioncore.libs.maven')
+    relocate('org.apache.http', 'com.eloli.sodioncore.libs.http')
+    relocate('org.apache.commons', 'com.eloli.sodioncore.libs.commons')
+    relocate('org.objectweb.asm', 'com.eloli.sodioncore.libs.asm')
+    relocate('org.codehaus.plexus', 'com.eloli.sodioncore.libs.plexus')
+    exclude('module-info.class')
+}
+
+assemble.dependsOn(shadowJar)

@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+    // What need download runtime
+    compile 'org.mindrot:jbcrypt:0.4'
+}
+
+shadowJar{
+    relocate('org.mindrot.jbcrypt','com.eloli.sodioncoreexample.libs.jbcrypt')
+}
+
+assemble.dependsOn(shadowJar)

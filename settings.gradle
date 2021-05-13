@@ -1,0 +1,3 @@
+rootProject.name = 'SodionCoreExample'
+include(':Libs')
+
