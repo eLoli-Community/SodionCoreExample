@@ -8,8 +8,8 @@ dependencies {
     compile 'org.mindrot:jbcrypt:0.4'
 }
 
-shadowJar{
-    relocate('org.mindrot.jbcrypt','com.eloli.sodioncoreexample.libs.jbcrypt')
+shadowJar {
+    relocate('org.mindrot.jbcrypt', 'com.eloli.sodioncoreexample.libs.jbcrypt')
 }
 
 assemble.dependsOn(shadowJar)

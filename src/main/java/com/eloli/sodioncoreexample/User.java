@@ -21,18 +21,18 @@ public class User extends SodionEntity {
     @Transient
     public Player player;
 
-    public User(){
+    public User() {
         // MUST have noArgs constructor
     }
 
-    public User(Player player){
+    public User(Player player) {
         this.player = player;
         this.name = player.getName();
         this.uuid = player.getUniqueId();
     }
 
-    public Player getPlayer(){
-        if(player == null){
+    public Player getPlayer() {
+        if (player == null) {
             return Bukkit.getPlayer(uuid);
         }
         return player;

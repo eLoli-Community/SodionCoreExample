@@ -1,5 +1,6 @@
 package com.eloli.sodioncoreexample;
 
+import com.eloli.sodioncore.channel.BadSignException;
 import com.eloli.sodioncore.config.ConfigureService;
 import com.eloli.sodioncore.dependency.DependencyManager;
 import com.eloli.sodioncore.file.BaseFileService;
@@ -7,6 +8,7 @@ import com.eloli.sodioncore.logger.AbstractLogger;
 import com.eloli.sodioncore.orm.OrmService;
 import com.eloli.sodioncore.orm.SodionEntity;
 import com.eloli.sodioncore.orm.configure.DatabaseConfigure;
+import com.eloli.sodioncoreexample.channel.Channel;
 import com.eloli.sodioncoreexample.config.MainConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,7 +35,7 @@ public class BukkitLoader extends JavaPlugin implements Listener {
         fileService = new BaseFileService(getDataFolder().getPath());
 
         try {
-            configureService = new ConfigureService<>(fileService,"config.json","com.eloli.sodioncoreexample.config",2);
+            configureService = new ConfigureService<>(fileService, "config.json", "com.eloli.sodioncoreexample.config", 2);
         } catch (Exception exception) {
             getLogger().warning("Failed to load config.");
             exception.printStackTrace();
@@ -64,9 +66,9 @@ public class BukkitLoader extends JavaPlugin implements Listener {
             }
         };
 
-        Map<String,String> relocateMap = new HashMap<>();
-        relocateMap.put("org.mindrot.jbcrypt","com.eloli.sodioncoreexample.libs.jbcrypt");
-        dependencyManager = new DependencyManager(fileService,logger,relocateMap,"https://maven.aliyun.com/repository/central/");
+        Map<String, String> relocateMap = new HashMap<>();
+        relocateMap.put("org.mindrot.jbcrypt", "com.eloli.sodioncoreexample.libs.jbcrypt");
+        dependencyManager = new DependencyManager(fileService, logger, relocateMap, "https://maven.aliyun.com/repository/central/");
         dependencyManager.checkDependencyMaven("org.mindrot:jbcrypt:0.4:com.eloli.sodioncoreexample.libs.jbcrypt.BCrypt");
 
         List<Class<? extends SodionEntity>> entities = new ArrayList<>();
@@ -81,19 +83,25 @@ public class BukkitLoader extends JavaPlugin implements Listener {
             throw new RuntimeException(e);
         }
 
-        getServer().getPluginManager().registerEvents(this,this);
+        getServer().getPluginManager().registerEvents(this, this);
+
+        try {
+            new Channel().packet();
+        } catch (BadSignException e) {
+            e.printStackTrace();
+        }
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-        getServer().getScheduler().runTaskAsynchronously(this,()->{
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
             Session session = ormService.sessionFactory.openSession();
             session.beginTransaction();
-            User user = session.get(User.class,e.getPlayer().getUniqueId());
-            if(user == null){
+            User user = session.get(User.class, e.getPlayer().getUniqueId());
+            if (user == null) {
                 user = new User(e.getPlayer());
                 session.save(user);
-            }else if(!e.getPlayer().getName().equals(user.name)){
+            } else if (!e.getPlayer().getName().equals(user.name)) {
                 session.update(user);
             }
             session.getTransaction().commit();
